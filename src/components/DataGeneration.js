@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "tailwindcss/tailwind.css";
 import _ from "lodash";
-import {
-    georgianAlphabet,
-    dutchAlphabet,
-    englishAlphabet,
-} from "./alphabets.js";
+import { georgianAlphabet, dutchAlphabet, englishAlphabet } from "./alphabets.js";
 import {
     faker,
     fakerKA_GE as fakerGE,
@@ -50,10 +46,7 @@ const DataGeneration = () => {
         const handleScroll = (event) => {
             setScroll(window.scrollY);
         };
-        if (
-            window.innerHeight + window.scrollY >=
-            document.body.offsetHeight - 100
-        ) {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
             setPages(pages + 1);
         }
         window.addEventListener("scroll", handleScroll);
@@ -94,10 +87,7 @@ const DataGeneration = () => {
         let randomCharacter;
         type === "personalId" || type === "phoneNumber"
             ? (randomCharacter = faker.string.numeric({ length: 1 }))
-            : (randomCharacter = faker.string.fromCharacters(
-                  alphabets[region],
-                  1
-              ));
+            : (randomCharacter = faker.string.fromCharacters(alphabets[region], 1));
         return randomCharacter;
     }
 
@@ -192,14 +182,8 @@ const DataGeneration = () => {
                     personalId = await generateError(personalId, "personalId");
                     country = await generateError(country);
                     city = await generateError(city);
-                    streetAddress = await generateError(
-                        streetAddress,
-                        "streetAddress"
-                    );
-                    phoneNumber = await generateError(
-                        phoneNumber,
-                        "phoneNumber"
-                    );
+                    streetAddress = await generateError(streetAddress, "streetAddress");
+                    phoneNumber = await generateError(phoneNumber, "phoneNumber");
 
                     newRecords.push({
                         index: 10 * p + i,
@@ -215,21 +199,16 @@ const DataGeneration = () => {
     };
 
     const handleInputChange = (e) => {
-        e.target.value > 1000
-            ? setErrorCount(1000)
-            : setErrorCount(e.target.value);
+        e.target.value > 1000 ? setErrorCount(1000) : setErrorCount(e.target.value);
     };
 
-    const inputStyle =
-        "px-2 py-1  border rounded hover:cursor-pointer lg:w-[100px] min-w-16";
+    const inputStyle = "px-2 py-1  border rounded hover:cursor-pointer lg:w-[100px] min-w-16";
     const inputContainerStyle = "flex gap-2 lg:gap-4 items-center";
     const tableStyle = "px-4 py-2 border";
 
     return (
         <div className="p-8 mt-16 m-auto w-3/5 min-w-fit align-middle items-center   ">
-            <h1 className="text-3xl font-bold mb-16 text-center  ">
-                Fake Data Generator
-            </h1>
+            <h1 className="text-3xl font-bold mb-16 text-center  ">Fake Data Generator</h1>
             <div className="flex flex-row gap-4 mb-4 justify-between items-center content-center m-auto flex-wrap">
                 <div className={`${inputContainerStyle}  `}>
                     <label htmlFor="region" className="">
@@ -306,19 +285,11 @@ const DataGeneration = () => {
                 <tbody>
                     {records.map((record) => (
                         <tr key={record.index}>
-                            <td className={`${tableStyle} text-center w-1 `}>
-                                {record.index}
-                            </td>
-                            <td className={`${tableStyle}  `}>
-                                {record.identifier}
-                            </td>
+                            <td className={`${tableStyle} text-center w-1 `}>{record.index}</td>
+                            <td className={`${tableStyle}  `}>{record.identifier}</td>
                             <td className={`${tableStyle}  `}>{record.name}</td>
-                            <td className={`${tableStyle}  `}>
-                                {record.address}
-                            </td>
-                            <td className={`${tableStyle}  `}>
-                                {record.phone}
-                            </td>
+                            <td className={`${tableStyle}  `}>{record.address}</td>
+                            <td className={`${tableStyle}  `}>{record.phone}</td>
                         </tr>
                     ))}
                 </tbody>

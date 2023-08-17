@@ -26,7 +26,7 @@ const countries = {
     USA: "United States",
 };
 
-const dataGeneration = () => {
+const DataGeneration = () => {
     const [region, setRegion] = useState("Georgia");
     const [errorCount, setErrorCount] = useState(0);
     const [seed, setSeed] = useState("");
@@ -325,4 +325,4 @@ const dataGeneration = () => {
     );
 };
 
-export default dataGeneration;
+export default DataGeneration;

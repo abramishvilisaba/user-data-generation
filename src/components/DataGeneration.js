@@ -244,7 +244,7 @@ const DataGeneration = () => {
                     <input
                         type="text"
                         id="errorCount"
-                        value={errorCount > 0 ? errorCount : ""}
+                        value={errorCount}
                         max={1000}
                         onChange={handleInputChange}
                         className={`${inputStyle} w-20 `}

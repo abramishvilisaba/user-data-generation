@@ -202,7 +202,7 @@ const DataGeneration = () => {
         e.target.value > 1000 ? setErrorCount(1000) : setErrorCount(e.target.value);
     };
 
-    const inputStyle = "px-2 py-1  border rounded hover:cursor-pointer lg:w-[100px] min-w-16";
+    const inputStyle = "px-2 py-1  border rounded hover:cursor-pointer  min-w-16";
     const inputContainerStyle = "flex gap-2 lg:gap-4 items-center";
     const tableStyle = "px-4 py-2 border";
 
@@ -218,7 +218,7 @@ const DataGeneration = () => {
                         id="region"
                         value={region}
                         onChange={(e) => setRegion(e.target.value)}
-                        className={`${inputStyle} w-32 text-left `}
+                        className={`${inputStyle} xl:w-[140px] text-left `}
                     >
                         {regions.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -236,10 +236,10 @@ const DataGeneration = () => {
                         id="errorCount"
                         min={0}
                         max={10}
-                        step={1}
+                        step={0.5}
                         value={errorCount}
                         onChange={(e) => setErrorCount(e.target.value)}
-                        className={` mt-[2px] hover:cursor-pointer`}
+                        className={` mt-[2px] xl:w-[160px] hover:cursor-pointer`}
                     />
                     <input
                         type="text"

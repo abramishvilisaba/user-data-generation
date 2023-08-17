@@ -20,7 +20,13 @@ const regions = [
     { label: "USA", value: "USA" },
 ];
 
-const App = () => {
+const countries = {
+    Georgia: "საქართველო",
+    Netherlands: "Nederland",
+    USA: "United States",
+};
+
+const dataGeneration = () => {
     const [region, setRegion] = useState("Georgia");
     const [errorCount, setErrorCount] = useState(0);
     const [seed, setSeed] = useState("");
@@ -29,51 +35,17 @@ const App = () => {
     const [pages, setPages] = useState(1);
     const [scroll, setScroll] = useState(0);
 
-    // useEffect(() => {
-    //     const handleScroll = (event) => {
-    //         setScrollTop(window.scrollY);
-    //     };
-
-    //     window.addEventListener("scroll", handleScroll);
-
-    //     return () => {
-    //         window.removeEventListener("scroll", handleScroll);
-    //     };
-    // }, []);
-    console.log(scroll);
-
-    // const handleScroll = (event) => {
-    //     setScroll(event.currentTarget.scrollTop);
-    // };
-    // const handleScroll = () => {
-    //     setScroll(window.innerHeight + window.scrollY);
-    //     if (
-    //         window.innerHeight + window.scrollY >=
-    //         document.body.offsetHeight - 200
-    //     ) {
-    //         setPages(pages + 1);
-    //     }
-    // };
-
     useEffect(() => {
         const handleScroll = (event) => {
             setScroll(window.scrollY);
         };
-        console.log(pages);
-        console.log("------------------");
-        console.log(
-            window.innerHeight + window.scrollY,
-            document.body.offsetHeight
-        );
         if (
             window.innerHeight + window.scrollY >=
             document.body.offsetHeight - 100
         ) {
             setPages(pages + 1);
         }
-
         window.addEventListener("scroll", handleScroll);
-
         return () => {
             window.removeEventListener("scroll", handleScroll);
         };
@@ -88,6 +60,7 @@ const App = () => {
         Netherlands: fakerNL,
         USA: fakerUS,
     };
+
     const alphabets = {
         Georgia: georgianAlphabet,
         Netherlands: dutchAlphabet,
@@ -126,8 +99,6 @@ const App = () => {
                   alphabets[region],
                   1
               ));
-        console.log(type, randomCharacter);
-
         return randomCharacter;
     }
 
@@ -183,22 +154,15 @@ const App = () => {
     }
 
     const generateError = async (record, type) => {
-        const originalString = record;
         const errorCountRounded = _.floor(errorCount);
         if (record) {
             for (let i = 0; i < errorCountRounded; i++) {
-                // console.log(record);
                 record = await runRandomFunction(record, type);
             }
         }
-
         if (measureProbability()) {
-            console.log("prob=============================================");
             record = runRandomFunction(record, type);
         }
-
-        // console.log(originalString);
-        // console.log(record);
         return record;
     };
 
@@ -211,22 +175,26 @@ const App = () => {
                 locale.seed(seed + p);
                 for (let i = 1; i <= 10; i++) {
                     let firstName = locale.person.firstName();
-                    firstName = await generateError(firstName);
                     let lastName = locale.person.lastName();
-                    lastName = await generateError(lastName);
                     let middleName = "";
+                    let personalId = generatePersonalId();
+                    let country = countries[region];
+                    let city = locale.location.city();
+                    let streetAddress = locale.location.streetAddress();
+                    let phoneNumber = locale.phone.number();
                     if (region === "USA") {
                         middleName = locale.person.middleName();
                         middleName = await generateError(middleName);
                     }
-                    let personalId = generatePersonalId();
+                    firstName = await generateError(firstName);
+                    lastName = await generateError(lastName);
                     personalId = await generateError(personalId, "personalId");
-                    let streetAddress = locale.location.streetAddress();
+                    country = await generateError(country);
+                    city = await generateError(city);
                     streetAddress = await generateError(
                         streetAddress,
                         "streetAddress"
                     );
-                    let phoneNumber = locale.phone.number();
                     phoneNumber = await generateError(
                         phoneNumber,
                         "phoneNumber"
@@ -235,7 +203,7 @@ const App = () => {
                         index: 10 * p + i,
                         identifier: personalId,
                         name: `${firstName} ${middleName} ${lastName}`,
-                        address: streetAddress,
+                        address: `${country}, ${city}, ${streetAddress}`,
                         phone: phoneNumber,
                     });
                 }
@@ -250,18 +218,17 @@ const App = () => {
             : setErrorCount(e.target.value);
     };
 
-    const inputStyle = "px-2 py-1 border rounded hover:cursor-pointer";
-    const inputContainerStyle = "flex gap-4 items-center";
+    const inputStyle =
+        "px-2 py-1  border rounded hover:cursor-pointer lg:w-[100px] min-w-16";
+    const inputContainerStyle = "flex gap-2 lg:gap-4 items-center";
+    const tableStyle = "px-4 py-2 border";
 
     return (
-        <div className="p-8 m-auto w-3/5 min-w-fit align-middle items-center">
-            <h1 className="text-3xl font-bold mb-16 text-center ">
-                Random Records Generator
+        <div className="p-8 mt-16 m-auto w-3/5 min-w-fit align-middle items-center   ">
+            <h1 className="text-3xl font-bold mb-16 text-center  ">
+                Fake Data Generator
             </h1>
-            <div
-                className="flex flex-row  mb-4 justify-between items-center content-center m-auto"
-                // onsCroll={handleScroll}
-            >
+            <div className="flex flex-row gap-4 mb-4 justify-between items-center content-center m-auto flex-wrap">
                 <div className={`${inputContainerStyle}  `}>
                     <label htmlFor="region" className="">
                         Select Region:
@@ -291,7 +258,6 @@ const App = () => {
                         step={1}
                         value={errorCount}
                         onChange={(e) => setErrorCount(e.target.value)}
-                        // className={`${inputStyle} w-1/2`}
                         className={` mt-[2px] hover:cursor-pointer`}
                     />
                     <input
@@ -324,31 +290,33 @@ const App = () => {
                         Random
                     </button>
                 </div>
-                {/* {scroll}
-                {pages} */}
             </div>
             <table className="w-full border-collapse border">
                 <thead>
                     <tr>
-                        <th className="px-4 py-2 border">Index</th>
-                        <th className="px-4 py-2 border">Identifier</th>
-                        <th className="px-4 py-2 border">Name</th>
-                        <th className="px-4 py-2 border">Address</th>
-                        <th className="px-4 py-2 border">Phone</th>
+                        <th className={`${tableStyle}  `}>Index</th>
+                        <th className={`${tableStyle}  `}>Identifier</th>
+                        <th className={`${tableStyle}  `}>Name</th>
+                        <th className={`${tableStyle}  `}>Address</th>
+                        <th className={`${tableStyle}  `}>Phone</th>
                     </tr>
                 </thead>
                 <tbody>
                     {records.map((record) => (
                         <tr key={record.index}>
-                            <td className="px-4 py-2 border">{record.index}</td>
-                            <td className="px-4 py-2 border">
+                            <td className={`${tableStyle} text-center w-1 `}>
+                                {record.index}
+                            </td>
+                            <td className={`${tableStyle}  `}>
                                 {record.identifier}
                             </td>
-                            <td className="px-4 py-2 border">{record.name}</td>
-                            <td className="px-4 py-2 border">
+                            <td className={`${tableStyle}  `}>{record.name}</td>
+                            <td className={`${tableStyle}  `}>
                                 {record.address}
                             </td>
-                            <td className="px-4 py-2 border">{record.phone}</td>
+                            <td className={`${tableStyle}  `}>
+                                {record.phone}
+                            </td>
                         </tr>
                     ))}
                 </tbody>
@@ -357,4 +325,4 @@ const App = () => {
     );
 };
 
-export default App;
+export default dataGeneration;

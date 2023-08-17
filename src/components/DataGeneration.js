@@ -119,7 +119,6 @@ const App = () => {
     }
 
     function getRandomCharacter(type) {
-        console.log(type);
         let randomCharacter;
         type === "personalId" || type === "phoneNumber"
             ? (randomCharacter = faker.string.numeric({ length: 1 }))
@@ -127,21 +126,22 @@ const App = () => {
                   alphabets[region],
                   1
               ));
+        console.log(type, randomCharacter);
 
         return randomCharacter;
     }
 
     function addChar(inputString, type) {
+        const randomCharacter = getRandomCharacter(type);
         if (typeof inputString !== "undefined" && inputString.length > 0) {
             let randomIndex = faker.number.int(inputString.length);
-            const randomCharacter = getRandomCharacter(type);
             let modifiedString =
                 inputString.substring(0, randomIndex) +
                 randomCharacter +
                 inputString.substring(randomIndex);
             return modifiedString;
         } else {
-            return faker.string.fromCharacters(georgianAlphabet, 1);
+            return randomCharacter;
         }
     }
 
@@ -176,7 +176,7 @@ const App = () => {
         return selectedFunction(inputString, type);
     }
 
-    function measureProbabilty() {
+    function measureProbability() {
         const errorProbabilty = Math.ceil(errorCount * 100) % 100;
         let randValue = faker.number.int({ min: 1, max: 100 });
         return randValue <= errorProbabilty;
@@ -192,7 +192,10 @@ const App = () => {
             }
         }
 
-        measureProbabilty() ? (record = runRandomFunction(record, type)) : null;
+        if (measureProbability()) {
+            console.log("prob=============================================");
+            record = runRandomFunction(record, type);
+        }
 
         // console.log(originalString);
         // console.log(record);
@@ -211,11 +214,11 @@ const App = () => {
                     firstName = await generateError(firstName);
                     let lastName = locale.person.lastName();
                     lastName = await generateError(lastName);
-                    let middleName =
-                        region === "USA" ? locale.person.middleName() : "";
-                    region === "USA"
-                        ? (middleName = await generateError(middleName))
-                        : "";
+                    let middleName = "";
+                    if (region === "USA") {
+                        middleName = locale.person.middleName();
+                        middleName = await generateError(middleName);
+                    }
                     let personalId = generatePersonalId();
                     personalId = await generateError(personalId, "personalId");
                     let streetAddress = locale.location.streetAddress();

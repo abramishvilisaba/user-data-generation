@@ -25,10 +25,63 @@ const App = () => {
     const [errorCount, setErrorCount] = useState(0);
     const [seed, setSeed] = useState("");
     const [records, setRecords] = useState([]);
+    const [count, setCount] = useState(20);
+    const [pages, setPages] = useState(1);
+    const [scroll, setScroll] = useState(0);
 
-    // const customFaker = new Faker({
-    //     locale: [de_CH, de, en, base],
-    // });
+    // useEffect(() => {
+    //     const handleScroll = (event) => {
+    //         setScrollTop(window.scrollY);
+    //     };
+
+    //     window.addEventListener("scroll", handleScroll);
+
+    //     return () => {
+    //         window.removeEventListener("scroll", handleScroll);
+    //     };
+    // }, []);
+    console.log(scroll);
+
+    // const handleScroll = (event) => {
+    //     setScroll(event.currentTarget.scrollTop);
+    // };
+    // const handleScroll = () => {
+    //     setScroll(window.innerHeight + window.scrollY);
+    //     if (
+    //         window.innerHeight + window.scrollY >=
+    //         document.body.offsetHeight - 200
+    //     ) {
+    //         setPages(pages + 1);
+    //     }
+    // };
+
+    useEffect(() => {
+        const handleScroll = (event) => {
+            setScroll(window.scrollY);
+        };
+        console.log(pages);
+        console.log("------------------");
+        console.log(
+            window.innerHeight + window.scrollY,
+            document.body.offsetHeight
+        );
+        if (
+            window.innerHeight + window.scrollY >=
+            document.body.offsetHeight - 100
+        ) {
+            setPages(pages + 1);
+        }
+
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, [scroll]);
+
+    useEffect(() => {
+        generateRandomData(count);
+    }, [region, errorCount, seed, pages]);
 
     const fakerLocales = {
         Georgia: fakerGE,
@@ -41,17 +94,47 @@ const App = () => {
         USA: englishAlphabet,
     };
 
-    //
+    function generatePersonalId() {
+        let personalId;
+        switch (region) {
+            case "Netherlands":
+                personalId = faker.string.numeric({ length: 9 });
+                break;
+            case "USA":
+                personalId =
+                    faker.string.numeric({ length: 3 }) +
+                    "-" +
+                    faker.string.numeric({ length: 2 }) +
+                    "-" +
+                    faker.string.numeric({ length: 4 });
+                break;
+            case "Georgia":
+                personalId = faker.string.octal({ length: 9, prefix: "01" });
+                break;
+            default:
+                personalId = "";
+                break;
+        }
+        return personalId;
+    }
 
-    //
+    function getRandomCharacter(type) {
+        console.log(type);
+        let randomCharacter;
+        type === "personalId" || type === "phoneNumber"
+            ? (randomCharacter = faker.string.numeric({ length: 1 }))
+            : (randomCharacter = faker.string.fromCharacters(
+                  alphabets[region],
+                  1
+              ));
 
-    function addChar(inputString) {
+        return randomCharacter;
+    }
+
+    function addChar(inputString, type) {
         if (typeof inputString !== "undefined" && inputString.length > 0) {
             let randomIndex = faker.number.int(inputString.length);
-            const randomCharacter = faker.string.fromCharacters(
-                alphabets[region],
-                1
-            );
+            const randomCharacter = getRandomCharacter(type);
             let modifiedString =
                 inputString.substring(0, randomIndex) +
                 randomCharacter +
@@ -86,11 +169,11 @@ const App = () => {
         }
     }
 
-    async function runRandomFunction(inputString) {
+    async function runRandomFunction(inputString, type) {
         const functions = [removeChar, swapChars, addChar];
         const randomLodashNumber = _.random(2);
         const selectedFunction = functions[randomLodashNumber];
-        return selectedFunction(inputString);
+        return selectedFunction(inputString, type);
     }
 
     function measureProbabilty() {
@@ -99,88 +182,60 @@ const App = () => {
         return randValue <= errorProbabilty;
     }
 
-    const generateError = async (record) => {
+    const generateError = async (record, type) => {
         const originalString = record;
         const errorCountRounded = _.floor(errorCount);
         if (record) {
             for (let i = 0; i < errorCountRounded; i++) {
-                console.log(record);
-                record = await runRandomFunction(record);
+                // console.log(record);
+                record = await runRandomFunction(record, type);
             }
         }
 
-        measureProbabilty() ? (record = runRandomFunction(record)) : null;
+        measureProbabilty() ? (record = runRandomFunction(record, type)) : null;
 
-        console.log(originalString);
-        console.log(record);
+        // console.log(originalString);
+        // console.log(record);
         return record;
     };
 
-    function generatePersonalId() {
-        let personalId;
-
-        switch (region) {
-            case "Netherlands":
-                personalId = faker.string.numeric({ length: 9 });
-                break;
-            case "USA":
-                personalId =
-                    faker.string.numeric({ length: 3 }) +
-                    "-" +
-                    faker.string.numeric({ length: 2 }) +
-                    "-" +
-                    faker.string.numeric({ length: 4 });
-                break;
-            case "Georgia":
-                personalId = faker.string.octal({ length: 9, prefix: "01" });
-                break;
-            default:
-                personalId = "";
-                break;
-        }
-
-        return personalId;
-    }
-
-    const generateRandomData = async () => {
+    const generateRandomData = async (count) => {
         const locale = fakerLocales[region];
         const newRecords = [];
-
         if (locale) {
             locale.seed(seed);
-            //
-            // let record = locale.person.firstName();
-            // console.log(record);
-            // record ? (record = await generateError(record, locale)) : null;
-            // console.log(record);
-
-            for (let i = 1; i <= 20; i++) {
-                let firstName = locale.person.firstName();
-                firstName = await generateError(firstName);
-                let lastName = locale.person.lastName();
-                lastName = await generateError(lastName);
-                let middleName =
-                    region === "USA" ? locale.person.middleName() : "";
-                region === "USA"
-                    ? (middleName = await generateError(middleName))
-                    : "";
-                let personalId = generatePersonalId();
-                personalId = await generateError(personalId, "personalId");
-                let streetAddress = locale.location.streetAddress();
-                streetAddress = await generateError(
-                    streetAddress,
-                    "streetAddress"
-                );
-                let phoneNumber = locale.phone.number();
-                phoneNumber = await generateError(phoneNumber, "phoneNumber");
-
-                newRecords.push({
-                    index: i,
-                    identifier: personalId,
-                    name: `${firstName} ${middleName} ${lastName}`,
-                    address: streetAddress,
-                    phone: phoneNumber,
-                });
+            for (let p = 0; p < pages; p++) {
+                locale.seed(seed + p);
+                for (let i = 1; i <= 10; i++) {
+                    let firstName = locale.person.firstName();
+                    firstName = await generateError(firstName);
+                    let lastName = locale.person.lastName();
+                    lastName = await generateError(lastName);
+                    let middleName =
+                        region === "USA" ? locale.person.middleName() : "";
+                    region === "USA"
+                        ? (middleName = await generateError(middleName))
+                        : "";
+                    let personalId = generatePersonalId();
+                    personalId = await generateError(personalId, "personalId");
+                    let streetAddress = locale.location.streetAddress();
+                    streetAddress = await generateError(
+                        streetAddress,
+                        "streetAddress"
+                    );
+                    let phoneNumber = locale.phone.number();
+                    phoneNumber = await generateError(
+                        phoneNumber,
+                        "phoneNumber"
+                    );
+                    newRecords.push({
+                        index: 10 * p + i,
+                        identifier: personalId,
+                        name: `${firstName} ${middleName} ${lastName}`,
+                        address: streetAddress,
+                        phone: phoneNumber,
+                    });
+                }
             }
             setRecords(newRecords);
         }
@@ -192,10 +247,6 @@ const App = () => {
             : setErrorCount(e.target.value);
     };
 
-    useEffect(() => {
-        generateRandomData();
-    }, [region, errorCount, seed]);
-
     const inputStyle = "px-2 py-1 border rounded hover:cursor-pointer";
     const inputContainerStyle = "flex gap-4 items-center";
 
@@ -204,7 +255,10 @@ const App = () => {
             <h1 className="text-3xl font-bold mb-16 text-center ">
                 Random Records Generator
             </h1>
-            <div className="flex flex-row  mb-4 justify-between items-center content-center m-auto">
+            <div
+                className="flex flex-row  mb-4 justify-between items-center content-center m-auto"
+                // onsCroll={handleScroll}
+            >
                 <div className={`${inputContainerStyle}  `}>
                     <label htmlFor="region" className="">
                         Select Region:
@@ -261,13 +315,14 @@ const App = () => {
                     <button
                         onClick={() => {
                             setSeed(faker.number.int(1000));
-                            generateRandomData();
                         }}
                         className="flex px-4 py-2  bg-blue-500 text-white rounded justify-start"
                     >
                         Random
                     </button>
                 </div>
+                {/* {scroll}
+                {pages} */}
             </div>
             <table className="w-full border-collapse border">
                 <thead>

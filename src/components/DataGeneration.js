@@ -6,7 +6,6 @@ import {
     dutchAlphabet,
     englishAlphabet,
 } from "./alphabets.js";
-
 import {
     faker,
     fakerKA_GE as fakerGE,
@@ -24,6 +23,18 @@ const countries = {
     Georgia: "საქართველო",
     Netherlands: "Nederland",
     USA: "United States",
+};
+
+const fakerLocales = {
+    Georgia: fakerGE,
+    Netherlands: fakerNL,
+    USA: fakerUS,
+};
+
+const alphabets = {
+    Georgia: georgianAlphabet,
+    Netherlands: dutchAlphabet,
+    USA: englishAlphabet,
 };
 
 const DataGeneration = () => {
@@ -54,18 +65,6 @@ const DataGeneration = () => {
     useEffect(() => {
         generateRandomData(count);
     }, [region, errorCount, seed, pages]);
-
-    const fakerLocales = {
-        Georgia: fakerGE,
-        Netherlands: fakerNL,
-        USA: fakerUS,
-    };
-
-    const alphabets = {
-        Georgia: georgianAlphabet,
-        Netherlands: dutchAlphabet,
-        USA: englishAlphabet,
-    };
 
     function generatePersonalId() {
         let personalId;
@@ -182,10 +181,12 @@ const DataGeneration = () => {
                     let city = locale.location.city();
                     let streetAddress = locale.location.streetAddress();
                     let phoneNumber = locale.phone.number();
+
                     if (region === "USA") {
                         middleName = locale.person.middleName();
                         middleName = await generateError(middleName);
                     }
+
                     firstName = await generateError(firstName);
                     lastName = await generateError(lastName);
                     personalId = await generateError(personalId, "personalId");
@@ -199,6 +200,7 @@ const DataGeneration = () => {
                         phoneNumber,
                         "phoneNumber"
                     );
+
                     newRecords.push({
                         index: 10 * p + i,
                         identifier: personalId,

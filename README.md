@@ -47,7 +47,7 @@ This application is for educational and testing purposes only. The generated dat
 
 ## Author
 
-- GitHub: [abramishvilisaba](https://github.com/abramishvilisaba/user-data-generation))
+- GitHub: [abramishvilisaba](https://github.com/abramishvilisaba)
 
 ## Contributing
 

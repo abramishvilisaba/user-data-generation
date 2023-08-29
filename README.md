@@ -18,14 +18,11 @@
 Users should be able to:
 
 - Generate fake data such as name, personal id, adress, phone number
-- set seed value, or generate random seed, website will have same result for same seed values,
+- set seed value, or generate random seed, website will have same results for same seed values,
 -  scroll infinitly,
 -  generate errors in data
 
 
-### Screenshot
-
-![](./screenshot.jpg)
 
 ### Links
 

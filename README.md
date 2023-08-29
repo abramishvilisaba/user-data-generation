@@ -14,6 +14,10 @@ This project is a web application that allows users to generate and view fake us
 
 - **Realistic Data Generation**: The user data is generated based on region-specific lookup tables for names, surnames, cities, etc. This approach ensures that the data corresponds to the chosen region and appears realistic.
 
+### Screenshot
+
+![Screenshot](./screenshot.jpg)
+
 ## How to Use
 
 1. Open the web application in your browser.

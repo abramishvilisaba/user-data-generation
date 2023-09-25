@@ -2,6 +2,8 @@
 
 This project is a web application that allows users to generate and view fake user data with the ability to introduce data entry errors for testing and simulation purposes. The application supports selecting regions, specifying error rates per record, defining seed values, and generating random seeds. It's designed to generate random user data that looks realistic based on the chosen region.
 
+![App Preview](./screenshot.jpg)
+
 ## Features
 
 - **Region Selection**: Users can select a region from a list of available options, such as Georgia, USA,  and more. The generated user data will be tailored to the selected region's language and conventions.
@@ -13,10 +15,6 @@ This project is a web application that allows users to generate and view fake us
 - **Infinite Scrolling Table**: The application displays a table with 20 records initially. When users scroll down, the application loads the next batch of 10 records using infinite scrolling, providing a seamless user experience.
 
 - **Realistic Data Generation**: The user data is generated based on region-specific lookup tables for names, surnames, cities, etc. This approach ensures that the data corresponds to the chosen region and appears realistic.
-
-### Screenshot
-
-![Screenshot](./screenshot.jpg)
 
 ## How to Use
 
